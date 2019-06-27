@@ -45,10 +45,54 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
     const CODE = 'checkoutcom_apm';
 
     /**
-     * @var       string
-     * @overriden
+     * @var string
      */
     protected $_code = self::CODE;
+
+    /**
+     * @var bool
+     */
+    protected $_canAuthorize = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCapture = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCancel = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCapturePartial = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canVoid = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canUseInternal = false;
+
+    /**
+     * @var bool
+     */
+    protected $_canUseCheckout = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canRefund = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canRefundInvoicePartial = true;
 
     /**
      * @var ShopperHandlerService
@@ -163,11 +207,13 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
             if ($this->validateCurrency($method, $currency)) {
                 // Create source object
                 $source = $this->{$method}($data);
-                $payment = $this->createPayment($source,
-                                                $amount,
-                                                $currency,
-                                                $reference,
-                                                $this->_code);
+                $payment = $this->createPayment(
+                    $source,
+                    $amount,
+                    $currency,
+                    $reference,
+                    $this->_code
+                );
 
                 // Send the charge request
                 $response = $this->apiHandler
@@ -176,7 +222,6 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
 
                 return $response;
             }
-
 
             return $response;
         } catch (\Exception $e) {
@@ -250,7 +295,6 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
         }
     }
 
-
     /**
      * API related.
      */
@@ -314,7 +358,6 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
             $this->ckoLogger->write($e->getMessage());
             return null;
         }
-
     }
 
     /**
@@ -429,8 +472,7 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
             // Shipping fee
             $shipping = $quote->getShippingAddress();
 
-            if($shipping->getShippingDescription()) {
-
+            if ($shipping->getShippingDescription()) {
                 $product = new Product();
                 $product->name = $shipping->getShippingDescription();
                 $product->quantity = 1;
@@ -442,7 +484,6 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
 
                 $tax  += $product->total_tax_amount;
                 $products []= $product;
-
             }
 
             /* Billing */
@@ -474,7 +515,6 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
             $this->ckoLogger->write($e->getMessage());
             return null;
         }
-
     }
 
     /**
@@ -508,14 +548,12 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
             $product->price = $item->getPriceInclTax() *100;
             $product->product_id = $item->getId();
             $products []= $product;
-
         }
 
         // Shipping fee
         $shipping = $quote->getShippingAddress();
 
-        if($shipping->getShippingDescription()) {
-
+        if ($shipping->getShippingDescription()) {
             $product = new Product();
             $product->description = $shipping->getShippingDescription();
             $product->quantity = 1;
@@ -523,7 +561,6 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
             $product->product_id = 0;
 
             $products []= $product;
-
         }
 
         /* Billing */
@@ -564,12 +601,12 @@ class AlternativePaymentMethod extends \Magento\Payment\Model\Method\AbstractMet
         $name = $billingAddress->getFirstname() . ' ' . $billingAddress->getLastname();
         $country = $billingAddress->getCountry();
         $desciptor = __(
-                'Payment request from %1',
-                $this->config->getStoreName()
-            );
+            'Payment request from %1',
+            $this->config->getStoreName()
+        );
 
-        return new BancontactSource($name,$country, $desciptor);;
-
+        return new BancontactSource($name, $country, $desciptor);
+        ;
     }
 
     /**

@@ -171,6 +171,9 @@ class Callback extends \Magento\Framework\App\Action\Action
         }
     }
 
+    /**
+     * Get the request payload.
+     */
     protected function getPayload()
     {
         try {
@@ -181,11 +184,14 @@ class Callback extends \Magento\Framework\App\Action\Action
         }
     }
 
+    /**
+     * Check if the card needs saving.
+     */
     protected function cardNeedsSaving()
     {
         try {
             return isset($this->payload->data->metadata->saveCard)
-            && $this->payload->data->metadata->saveCard
+            && (int) $this->payload->data->metadata->saveCard == 1
             && isset($this->payload->data->metadata->customerId)
             && (int) $this->payload->data->metadata->customerId > 0
             && isset($this->payload->data->source->id)
@@ -196,6 +202,9 @@ class Callback extends \Magento\Framework\App\Action\Action
         }
     }
 
+    /**
+     * Save a card.
+     */
     protected function saveCard($response)
     {
         try {

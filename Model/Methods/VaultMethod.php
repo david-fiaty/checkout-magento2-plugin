@@ -27,15 +27,59 @@ use \Checkout\Models\Payments\ThreeDs;
 class VaultMethod extends \Magento\Payment\Model\Method\AbstractMethod
 {
     /**
-        * @var string
-        */
+     * @var string
+     */
     const CODE = 'checkoutcom_vault';
 
     /**
-     * @var       string
-     * @overriden
+     * @var string
      */
     protected $_code = self::CODE;
+
+    /**
+     * @var bool
+     */
+    protected $_canAuthorize = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCapture = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCancel = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCapturePartial = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canVoid = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canUseInternal = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canUseCheckout = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canRefund = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canRefundInvoicePartial = true;
 
     /**
      * @var VaultHandlerService
@@ -201,7 +245,7 @@ class VaultMethod extends \Magento\Payment\Model\Method\AbstractMethod
             $request->payment_ip = $this->remoteAddress->getRemoteAddress();
             $request->payment_type = 'Regular';
             if ($captureDate) {
-                $request->capture_time = $this->config->getCaptureTime();
+                $request->capture_on = $this->config->getCaptureTime();
             }
 
             // Mada BIN Check
@@ -311,7 +355,7 @@ class VaultMethod extends \Magento\Payment\Model\Method\AbstractMethod
     {
         try {
             if (parent::isAvailable($quote) && null !== $quote) {
-                return $this->config->getValue('active', $this->_code) 
+                return $this->config->getValue('active', $this->_code)
                 && $this->vaultHandler->userHasCards()
                 && !$this->backendAuthSession->isLoggedIn();
             }

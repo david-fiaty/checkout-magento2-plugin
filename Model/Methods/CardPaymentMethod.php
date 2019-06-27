@@ -39,6 +39,51 @@ class CardPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_code = self::CODE;
 
     /**
+     * @var bool
+     */
+    protected $_canAuthorize = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCapture = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCancel = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canCapturePartial = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canVoid = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canUseInternal = false;
+
+    /**
+     * @var bool
+     */
+    protected $_canUseCheckout = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canRefund = true;
+
+    /**
+     * @var bool
+     */
+    protected $_canRefundInvoicePartial = true;
+
+    /**
      * @var CardHandlerService
      */
     protected $cardHandler;
@@ -167,7 +212,7 @@ class CardPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
             $request->payment_ip = $this->remoteAddress->getRemoteAddress();
             $request->payment_type = 'Regular';
             if ($captureDate) {
-                $request->capture_time = $this->config->getCaptureTime();
+                $request->capture_on = $this->config->getCaptureTime();
             }
 
             // Mada BIN Check
@@ -180,10 +225,11 @@ class CardPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 
             // Save card check
             if (isset($data['saveCard'])
+                && $data['saveCard'] === true
                 && $saveCardEnabled
                 && $this->customerSession->isLoggedIn()
             ) {
-                $request->metadata['saveCard'] = true;
+                $request->metadata['saveCard'] = 1;
                 $request->metadata['customerId'] = $this->customerSession->getCustomer()->getId();
             }
 

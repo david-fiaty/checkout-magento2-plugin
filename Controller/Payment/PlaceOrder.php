@@ -153,10 +153,6 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
                     if ($this->canPlaceOrder($response)) {
                         $this->placeOrder($response);
                     }
-                    else {
-                        // Order placement not possible
-                        $message = __('The order cannot not be placed.');
-                    }
                 } else {
                     // Payment failed
                     $message = __('The transaction could not be processed.');
@@ -170,9 +166,9 @@ class PlaceOrder extends \Magento\Framework\App\Action\Action
         } finally {
             return $this->jsonFactory->create()->setData(
                 [
-                'success' => $success,
-                'message' => $message,
-                'url' => $url
+                    'success' => $success,
+                    'message' => $message,
+                    'url' => $url
                 ]
             );
         }
